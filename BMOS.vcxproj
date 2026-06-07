@@ -165,8 +165,6 @@
     <ClCompile Include="CTextScroll.cpp" />
     <ClCompile Include="CTexture.cpp" />
     <ClCompile Include="CTitleBar.cpp" />
-    <ClCompile Include="CVoiceCommand.cpp" />
-    <ClCompile Include="CVoiceProcess.cpp" />
     <ClCompile Include="CVScrollBar.cpp" />
     <ClCompile Include="CWiFi.cpp" />
     <ClCompile Include="CWindow.cpp" />
@@ -211,8 +209,6 @@
     <ClInclude Include="CTextScroll.h" />
     <ClInclude Include="CTexture.h" />
     <ClInclude Include="CTitleBar.h" />
-    <ClInclude Include="CVoiceCommand.h" />
-    <ClInclude Include="CVoiceProcess.h" />
     <ClInclude Include="CVScrollBar.h" />
     <ClInclude Include="CWiFi.h" />
     <ClInclude Include="CWindow.h" />

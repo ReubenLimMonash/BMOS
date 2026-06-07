@@ -11,7 +11,6 @@ using namespace boost;
 
 CSettings::CSettings()
 {
-	mFaceInterval = 20;
 	mSlideInterval = 20;
 	mRandomVidInterval = 5;
 
@@ -50,11 +49,7 @@ bool CSettings::LoadFile(std::string filename)
             {
                 value = tok;
 
-                if (key == "FaceInterval")
-                {
-                    mFaceInterval = atoi(value.c_str());
-                }
-                else if (key == "Slideshow")
+                if (key == "Slideshow")
                 {
                     mSlideShow = false;
                     if (value == "1")
@@ -100,7 +95,6 @@ bool CSettings::SaveFile(std::string filename)
         return(false);
     }
 
-    ofile << "FaceInterval:" << mFaceInterval << endl;
     ofile << "Slideshow:" << mSlideShow << endl;
     ofile << "SlideInterval:" << mSlideInterval << endl;
     ofile << "RandomVideo:" << mRandomwVids << endl;

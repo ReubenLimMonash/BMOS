@@ -139,11 +139,8 @@ CDesktop::CDesktop(): CWindow()
 
 	mLabel = NULL;
 
-	mVoiceReboot = false;
-	mVoiceShutdown = false;
 	mConfigureJoystick = -1;
 
-	mFace = NULL;
 	mCursor = NULL;
 	mTrash = NULL;
 	mFAQ = NULL;
@@ -153,8 +150,6 @@ CDesktop::CDesktop(): CWindow()
 
 	mMessageBox = NULL;
 	mMouseOverWindow = NULL;
-
-	mFaceTimer = UINT32_MAX;
 	mRandomVideoTimer = UINT32_MAX;
 	mSlideTimer = UINT32_MAX;
 
@@ -175,16 +170,7 @@ CDesktop::CDesktop(): CWindow()
 		printf("Error reading voice commands.\n");
 	}
 
-	try
-	{
-		CVoiceCommand vc;
 
-		mVoiceCommands.GetConfig(CApplication::sBMOS_Root + "commands.conf");
-	}
-	catch (...)
-	{
-		printf("Error reading voice commands.\n");
-	}
 
 	try
 	{
@@ -201,9 +187,6 @@ CDesktop::CDesktop(int w, int h): CDesktop()
 	using namespace std::placeholders;
 
 	mCurrentVideo = 0;
-
-	mCurrentFace = 0;
-	mFaces.GetFiles(CApplication::sBMOS_Root + "/faces/", "jpg");
 
 	mCurrentSlide = 0;
 	mPictures.GetFiles(CApplication::sBMOS_Root + "/pictures/", "jpg");
@@ -459,7 +442,6 @@ void CDesktop::LoadSettings()
 		mRandomVideoTimer = UINT32_MAX;
 		mSlideTimer = UINT32_MAX;
 
-		mFaceTimer = SDL_GetTicks() + mSettings.mFaceInterval * 1000;
 		if (mSettings.mSlideShow)
 		{
 			mSlideTimer = SDL_GetTicks() + mSettings.mSlideInterval * 1000;
@@ -468,9 +450,6 @@ void CDesktop::LoadSettings()
 		{
 			mRandomVideoTimer = SDL_GetTicks() + mSettings.mRandomVidInterval * 1000 * 60;
 		}
-
-		mCurrentFace = 0;
-		mFaces.GetFiles(CApplication::sBMOS_Root + "/faces/", "jpg");
 
 		mCurrentSlide = 0;
 		mPictures.GetFiles(CApplication::sBMOS_Root + "/pictures/", "jpg");
@@ -521,7 +500,6 @@ void CDesktop::Init(bool desktop)
 	else
 	{
 		mVisible = false;
-		SetFace(1);
 	}
 }
 
@@ -534,9 +512,6 @@ void CDesktop::OnFileMenu(CMenuBarItem* item)
 	if (item->mText == "Exit")
 	{
 		mVisible = false;
-		SetFace(1);
-		//mDPadMouse = false;
-		//mMenuBar.mRightIcon->mVisible = false;
 
 		LoadSettings();
 	}
@@ -663,13 +638,10 @@ void CDesktop::OnMenuSave(CMenuBarItem* item)
 void CDesktop::OnMenuExit(CMenuBarItem* item)
 {
 	//printf("Exit\n");
-
-	SetFace(1);
 }
 
 void CDesktop::OnMenuSettings(CMenuBarItem* item)
 {
-	mSettingsForm->SetFaceInterval(mSettings.mFaceInterval);
 	mSettingsForm->SetRandomInterval(mSettings.mRandomVidInterval);
 	mSettingsForm->SetSlideInterval(mSettings.mSlideInterval);
 	mSettingsForm->SetRandomVideo(mSettings.mRandomwVids);
@@ -680,7 +652,6 @@ void CDesktop::OnMenuSettings(CMenuBarItem* item)
 
 void CDesktop::OnSettingsOK(CSettingsForm* form)
 {
-	mSettings.mFaceInterval = mSettingsForm->GetFaceInterval();
 	mSettings.mRandomVidInterval = mSettingsForm->GetRandomInterval();
 	mSettings.mSlideInterval = mSettingsForm->GetSlideInterval();
 	mSettings.mRandomwVids = mSettingsForm->GetRandomVideo();
@@ -693,8 +664,6 @@ void CDesktop::OnSettingsOK(CSettingsForm* form)
 	catch (...)
 	{
 	}
-
-	mFaceTimer = SDL_GetTicks() + mSettings.mFaceInterval * 1000;
 }
 
 void CDesktop::OnMenuAudio(CMenuBarItem* item)
@@ -1435,7 +1404,6 @@ void CDesktop::Update()
 	if (wpid != 0)
 	{
 		CheckPid();
-		mFaceTimer = SDL_GetTicks() + mSettings.mFaceInterval * 1000;
 	}
 
 	if (mVisible == false)
@@ -1462,12 +1430,10 @@ void CDesktop::Update()
 
 		if (mSettings.mSlideShow)
 		{
-			if (mVoiceReboot == false && mVoiceShutdown == false)
-			{
-				std::string path;
-				path = CApplication::sBMOS_Root + "/pictures/";
+			std::string path;
+			path = CApplication::sBMOS_Root + "/pictures/";
 
-				if (mPictures.mFiles.size() == 0)
+			if (mPictures.mFiles.size() == 0)
 				{
 					mSettings.mSlideShow = false;
 				}
@@ -1483,23 +1449,8 @@ void CDesktop::Update()
 				}
 			}
 		}
-		else if (SDL_TICKS_PASSED_FIXED(ticks, mFaceTimer))
-		{
-			if (mVoiceReboot == false && mVoiceShutdown == false)
-			{
-				mCurrentFace++;
-				if (mCurrentFace >= mFaces.mFiles.size())
-				{
-					mCurrentFace = 0;
-				}
-				SetFace(mCurrentFace);
-				mFaceTimer = SDL_GetTicks() + mSettings.mFaceInterval * 1000;
-			}
-		}
 
-	}
-
-	for (auto rit = mForms.begin(); rit != mForms.end(); )
+		for (auto rit = mForms.begin(); rit != mForms.end(); )
 	{
 		CForm* form = (*rit);
 
@@ -1597,10 +1548,6 @@ void CDesktop::Update()
 		)
 	{
 		mVisible = !mVisible;
-		if (mVisible == false)
-		{
-			SetFace(1);
-		}
 		return;
 	}
 
@@ -1699,10 +1646,6 @@ CWindow* CDesktop::OnKeyUp(SDL_KeyboardEvent e)
 			delete(mFace);
 			mFace = NULL;
 		}
-		else
-		{
-			SetFace(0);
-		}
 		EndRecord();
 		return(NULL);
 	}
@@ -1787,10 +1730,6 @@ void CDesktop::OnTextEvent(SDL_TextInputEvent e)
 		if (kc.mCommand == "mp4")
 		{
 			PlayVideo((char*)kc.mArgument1.c_str(), 0);
-			if (kc.mArgument2 != "")
-			{
-				SetFace(kc.mArgument2);
-			}
 		}
 		else if (kc.mCommand == "vg")
 		{
@@ -1806,10 +1745,6 @@ void CDesktop::OnTextEvent(SDL_TextInputEvent e)
 			SDL_Quit();
 
 			exit(EXIT_SUCCESS);
-		}
-		else if (kc.mCommand == "face")
-		{
-			SetFace(kc.mArgument1);
 		}
 		else if (kc.mCommand == "system")
 		{
@@ -1918,8 +1853,6 @@ CWindow* CDesktop::OnKeyDown(SDL_KeyboardEvent e)
 		}
 		else if (e.keysym.sym >= SDLK_0 && e.keysym.sym <= SDLK_9)
 		{
-			int face = e.keysym.sym - SDLK_0;
-			SetFace(face);
 		}
 		else if (e.keysym.sym == SDLK_COMMA || e.keysym.sym == SDLK_LEFT)
 		{
@@ -1934,7 +1867,6 @@ CWindow* CDesktop::OnKeyDown(SDL_KeyboardEvent e)
 			{
 				mCurrentFace--;
 				mCurrentFace = std::max(mCurrentFace, 0);
-				SetFace(mCurrentFace);
 			}
 		}
 		else if (e.keysym.sym == SDLK_TAB)
@@ -1957,7 +1889,6 @@ CWindow* CDesktop::OnKeyDown(SDL_KeyboardEvent e)
 			{
 				mCurrentFace++;
 				mCurrentFace = std::min(mCurrentFace, (int)mFaces.mFiles.size() - 1);
-				SetFace(mCurrentFace);
 			}
 
 		}
@@ -1987,10 +1918,6 @@ CWindow* CDesktop::OnKeyDown(SDL_KeyboardEvent e)
 			if (kc.mCommand == "mp4")
 			{
 				PlayVideo((char*)kc.mArgument1.c_str(), 0);
-				if (kc.mArgument2 != "")
-				{
-					SetFace(kc.mArgument2);
-				}
 			}
 		}
 		else if (e.keysym.sym == SDLK_RETURN)
@@ -2352,12 +2279,6 @@ void CDesktop::OnDiskDriveItemDoubleClick(CFolderForm* form, CListBoxItem* lbi)
 		mMessageBox->ShowMessage(str, "Install", CMessageBox::MessageStyle::OK_Cancel, CMessageBox::MessageAlign::Center);
 		mMessageBox->AddOnCloseHandler(std::bind(&CDesktop::OnConfirmInstallCredentials, this, _1, _2));
 	}
-	else if (itemText == "commands.conf")
-	{
-		sprintf(str, "Install %s?", itemText.c_str());
-		mMessageBox->ShowMessage(str, "Install", CMessageBox::MessageStyle::OK_Cancel, CMessageBox::MessageAlign::Center);
-		mMessageBox->AddOnCloseHandler(std::bind(&CDesktop::OnConfirmInstallVoice, this, _1, _2));
-	}
 	else if (itemText.find(".jpg") != std::string::npos)
 	{
 		OnPhotoItem(form, lbi);
@@ -2461,12 +2382,11 @@ void CDesktop::Draw()
 
 void CDesktop::shutdown()
 {
-	SetFace("blank.jpeg");
 	SDL_Refresh();
 	PlayVideoSync((char*)"wet.mp4");
 	printf("Shutdown OK\n");
 #ifndef WINDOWS
-	system("sudo halt");
+	// system("sudo halt");
 #endif
 	exit(EXIT_SUCCESS);
 }
@@ -2474,11 +2394,10 @@ void CDesktop::shutdown()
 void CDesktop::reboot()
 {
 	printf("Reboot OK\n");
-	SetFace("blank.jpeg");
 	SDL_Refresh();
 	PlayVideoSync((char*)"power.mp4");
 #ifndef WINDOWS
-	system("sudo reboot");
+	// system("sudo reboot");
 #endif
 
 	exit(EXIT_SUCCESS);
@@ -2580,33 +2499,6 @@ void CDesktop::OnConfirmRunScript(CMessageBox* box, CMessageBox::MessageResult r
 	else if (result == CMessageBox::MessageResult::Cancel)
 	{
 
-	}
-}
-
-void CDesktop::OnConfirmInstallVoice(CMessageBox* box, CMessageBox::MessageResult result)
-{
-	if (result == CMessageBox::MessageResult::OK)
-	{
-		//printf("OnConfirmInstallVoice OK\n");
-		std::string src = mDiskDrive->mPath + "/commands.conf";
-		std::string dst = CApplication::sBMOS_Root + "/commands.conf";
-
-		CFiles::Copy(src, dst);
-		PlayVideo((char*)"ah.mp4", 0);
-		try
-		{
-			CVoiceCommand vc;
-
-			mVoiceCommands.GetConfig(CApplication::sBMOS_Root + "commands.conf");
-		}
-		catch (...)
-		{
-			printf("Error reading voice commands.\n");
-		}
-	}
-	else if (result == CMessageBox::MessageResult::Cancel)
-	{
-		//printf("OnConfirmInstallVoice Cancel\n");
 	}
 }
 
@@ -2865,55 +2757,6 @@ void CDesktop::SetPicture(int pic)
 }
 
 
-void CDesktop::SetFace(int face)
-{
-	char str[1000];
-	if (mFace == NULL)
-	{
-		mFace = new CTexture();
-	}
-
-	sprintf(str, "%s/faces/%s", CApplication::sBMOS_Root.c_str(), mFaces.mFiles[face].c_str());
-
-	std::string path = str;
-
-	mFace->LoadFromFile(path);
-}
-
-void CDesktop::SetFace(std::string face)
-{
-	char str[1000];
-	if (mFace == NULL)
-	{
-		mFace = new CTexture();
-	}
-
-	sprintf(str, "%s/faces/%s", CApplication::sBMOS_Root.c_str(), face.c_str());
-
-	std::string path = str;
-
-	mFace->LoadFromFile(path);
-}
-
-void CDesktop::SetFace(std::string folder, std::string face)
-{
-	char str[1000];
-	if (mFace == NULL)
-	{
-		mFace = new CTexture();
-	}
-
-#ifdef WINDOWS
-	sprintf(str, "%s/%s", folder.c_str(), face.c_str());
-#else
-	sprintf(str, "%s/%s", folder.c_str(), face.c_str());
-#endif
-
-	std::string path = str;
-
-	mFace->LoadFromFile(path);
-}
-
 void CDesktop::StartRecord()
 {
 	//printf("StartRecord()\n");
@@ -2924,7 +2767,6 @@ void CDesktop::StartRecord()
 		return;
 	}
 
-	SetFace("bmo17.jpg");
 	//printf("Record\n");
 
 	mRecordPid = fork();
@@ -3018,12 +2860,12 @@ void CDesktop::EndRecord()
 
 	printf("End recording.\n");
 #endif
-
-	ProcessGoogleVoice();
 }
 
 void CDesktop::ProcessGoogleVoice()
 {
+	return;  // Voice command processing disabled
+
 	CVoiceCommand vc;
 
 	//char message[1000];
@@ -3175,8 +3017,8 @@ void CDesktop::ProcessGoogleVoice()
 		}
 	}
 #endif
-	mVoiceShutdown = false;
-	mVoiceReboot = false;
+	//mVoiceShutdown = false;
+	//mVoiceReboot = false;
 }
 
 void CDesktop::StartConfigureJoystick()
@@ -3382,6 +3224,5 @@ void CDesktop::ShowDesktop(bool show)
 	else
 	{
 		mVisible = false;
-		SetFace(1);
 	}
 }

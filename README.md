@@ -1,5 +1,8 @@
-# BMOS
-BMO Operating System
+# Modified BMOS
+Modified BMO Operating System from orbian. The main.cpp script was modified to only run in "Desktop mode". Just call the compiled code as usual:
+```
+sudo ./build/bmos
+```
 
 ## License
 Source code in this project is licensed under GNU General Public License v3.0

@@ -27,8 +27,6 @@ CTextBox.cpp
 CWiFi.cpp
 CKeyCommand.cpp
 CKeyMap.cpp
-CVoiceCommand.cpp
-CVoiceProcess.cpp
 CApplication.cpp
 CPhoto.cpp 
 CPhotoViewer.cpp 
@@ -66,19 +64,10 @@ target_link_libraries(bmos ${SDL2_LIBRARIES} Boost::filesystem Boost::regex)
 
 install(TARGETS bmos DESTINATION /home/pi/bmos)
 install(DIRECTORY fonts DESTINATION /home/pi/bmos)
-install(DIRECTORY faces DESTINATION /home/pi/bmos)
 install(DIRECTORY images DESTINATION /home/pi/bmos)
 install(DIRECTORY faq DESTINATION /home/pi/bmos)
 install(DIRECTORY pictures DESTINATION /home/pi/bmos)
 install(DIRECTORY scores DESTINATION /home/pi/bmos)
-install(DIRECTORY scripts DESTINATION /home/pi/bmos
-        PATTERN "scripts/*"
-        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
-                    GROUP_EXECUTE GROUP_READ)
-install(DIRECTORY servos DESTINATION /home/pi/bmos
-        PATTERN "servos/*"
-        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
-                    GROUP_EXECUTE GROUP_READ)
 install(DIRECTORY videos DESTINATION /home/pi/bmos)
 
 install(FILES bmo.txt commands.conf DESTINATION /home/pi/bmos

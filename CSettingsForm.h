@@ -8,7 +8,6 @@ class CSettingsForm : public CForm
 {
 public:
 
-	CMenuBarItem* mFaceIntervalMenu;
 	CMenuBarItem* mSlideIntervalMenu;
 	CMenuBarItem* mRandomIntervalMenu;
 	CMenuBarItem* mSlideShow;
@@ -22,9 +21,6 @@ public:
 
 	void OnMenu(CMenuBarItem* item);
 	void OnButton(CButton* button);
-
-	void SetFaceInterval(int i);
-	int GetFaceInterval();
 
 	void SetSlideInterval(int i);
 	int GetSlideInterval();

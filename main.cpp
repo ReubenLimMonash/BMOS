@@ -775,18 +775,7 @@ int main(int argc, char **argv)
 	Uint32 usbCheck = SDL_GetTicks() + 5000;
 	bool done;
 	CTexture* crack = NULL;
-	CPage pages[10];
-	bool startDesktop = false;
-
-	int counter = 0;
-
-	if (argc > 1)
-	{
-		if (strcmp(argv[1], "-desktop") == 0)
-		{
-			startDesktop = true;
-		}
-	}
+	bool startDesktop = true;  // Always start in Desktop mode
 	if (!createWindow())
 	{
 		printf("Failed to initialize!\n");
@@ -805,30 +794,12 @@ int main(int argc, char **argv)
 		gDesktop = new CDesktop(800, 600);
 		gDesktop->mVisible = true;
 		//printf("End CreateDesktop\n");
-		SDL_Color textYellow = { RChannel(pcolor), GChannel(pcolor), BChannel(pcolor) };
-		SDL_Color textGreen = { RChannel(mcolor), GChannel(mcolor), BChannel(mcolor) };
-		SDL_Color textRed = { 0xFF, 0, 0 };
 
 		//Main loop flag
 		bool quit = false;
-		std::stringstream cntStr;
-		
-		cntStr << counter;
-
-		CreatePage("X", 0, pages[1]);
-		pages[1].AddLine("Y");
 
 		//Event handler
 		SDL_Event e;
-		//SDL_SetRelativeMouseMode(SDL_TRUE);
-		//SDL_ShowCursor(SDL_TRUE);
-		auto start = std::chrono::system_clock::now();
-		// Some computation here
-		auto end = std::chrono::system_clock::now();
-
-		std::chrono::duration<double> elapsed_seconds = end - start;
-		double xs = (float)dispW / 800.0;
-		double ys = (float)dispH / 600.0;
 		SDL_StartTextInput();
 
 		gDesktop->Init(startDesktop);
@@ -836,34 +807,6 @@ int main(int argc, char **argv)
 		while (!quit)
 		{
 			const Uint8* state = SDL_GetKeyboardState(NULL);
-
-			//if (SDL_TICKS_PASSED_FIXED(SDL_GetTicks(), usbCheck))
-			//{
-			//	if (CheckUSB())
-			//	{
-			//		printf("USB\n");
-			//	}
-			//	usbCheck = SDL_GetTicks() + 5000;
-			//}
-
-			counter++;
-			char str[100];
-
-			if (counter > 100)
-			{
-				end = std::chrono::system_clock::now();
-				elapsed_seconds = end - start;
-
-				int fps = (int)((double)counter / (double)elapsed_seconds.count());
-
-
-				sprintf(str, "%d", fps);
-
-				pages[1].SetLine(1, str);
-
-				counter = 0;
-				start = std::chrono::system_clock::now();
-			}
 
 			gDesktop->Update();
 
@@ -881,57 +824,19 @@ int main(int argc, char **argv)
 				}
 
 			}
-			std::stringstream ss;
-			//ss << "X: " << mouseX << " Y: " << mouseY;
-			if (CDesktop::sFocused != NULL)
-			{
-				ss << CDesktop::sFocused->mID << " " << CDesktop::sFocused->mSelected << " " << CDesktop::sFocused->mVisible;
-			}
-			else
-			{
-				ss << "null";
-			}
 
-			pages[1].SetLine(0, ss.str().c_str());
-			
 			if (gBuffer != NULL)
 			{
 				gBuffer->SetAsRenderTarget();
-				//SDL_SetTextureBlendMode(gBuffer.mTexture, SDL_BLENDMODE_BLEND);
 				SDL_SetRenderDrawColor(gRenderer, 193, 243, 213, 255);
 				SDL_RenderClear(gRenderer);
 
-
-				pages[1].halign = false;
-				pages[1].valign = true;
-
-
 				gDesktop->Draw();
-
-				//done = DrawPage(textRed, pages[1]);
 
 				//Reset render target
 				SDL_SetRenderTarget(gRenderer, NULL);
 
 				gBuffer->DrawScaled(dispW, dispH);
-			}
-			if (gDesktop->mVisible)
-			{
-				
-				if (gDesktop->mOSStatus == false)
-				{
-					if (crack == NULL)
-					{
-						crack = new CTexture();
-						crack->LoadFromFile("images/crack.png");
-					}
-					crack->Draw(0,0,dispW, dispH, 0.0);
-				}
-				else if (crack != NULL)
-				{
-					delete(crack);
-					crack = NULL;
-				}
 			}
 
 			SDL_RenderPresent(gRenderer);

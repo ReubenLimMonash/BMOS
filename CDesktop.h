@@ -38,7 +38,6 @@
 #include "CApplication.h"
 #include "CFiles.h"
 #include <SDL2/SDL.h>
-#include "CVoiceProcess.h"
 #include "CKeyMap.h"
 #include "CSettings.h"
 #include "CPhoto.h"
@@ -59,23 +58,15 @@ public:
 
 	bool mOSStatus;
 	Uint32 mBlueButtonTimeout;
-	Uint32 mFaceTimer;
 	Uint32 mRandomVideoTimer;
 	Uint32 mSlideTimer;
 	bool mDPadMouse;
 	SDL_Event mKeyMouseEvent;
-	CVoiceProcess mVoiceCommands;
 	CKeyMap mKeyMap;
 	CTexture* mCursor;
-	CTexture* mFace;
-	CFiles mFaces;
 	CFiles mPictures;
 	int mCurrentSlide;
-	int mCurrentFace;
 	int mCurrentVideo;
-
-	bool mVoiceShutdown;
-	bool mVoiceReboot;
 
 	bool mRecording;
 	CSettings mSettings;
@@ -118,9 +109,6 @@ public:
 	void SetDragWindow(CDragWindow* win);
 	void OnDragDrop(CDragWindow* win);
 
-	void SetFace(int face);
-	void SetFace(std::string face);
-	void SetFace(std::string folder, std::string face);
 	void SetPicture(int pic);
 
 	void AddWinForm(CForm* form);
@@ -156,8 +144,7 @@ public:
 	void OnMenuLoScores(CMenuBarItem* item);
 	void OnMenuAbout(CMenuBarItem* item);
 	void OnMenuRepair(CMenuBarItem* item);
-	void OnMenuFAQ(CMenuBarItem* item);
-	void OnFAQItemDoubleClick(CFolderForm* form, CListBoxItem* lbi);
+
 
 	void OnSettingsOK(CSettingsForm* form);
 	void OnAudioOK(CAudioForm* form);
@@ -175,17 +162,15 @@ public:
 	void OnConfirmRunScript(CMessageBox* box, CMessageBox::MessageResult result);
 	void OnConfirmUpdateBMOS(CMessageBox* box, CMessageBox::MessageResult result);
 	void OnConfirmInstallCredentials(CMessageBox* box, CMessageBox::MessageResult result);
-	void OnConfirmInstallVoice(CMessageBox* box, CMessageBox::MessageResult result);
 	void OnConfirmInstallMedia(CMessageBox* box, CMessageBox::MessageResult result);
 
 	void OnFolderClose(CForm* form);
 	void OnFolderItemRemoved(CForm* form, CListBoxItem* item);
 	void OnFolderItemDoubleClick(CFolderForm* form, CListBoxItem* lbi);
 
+	void OnPhotoItem(CFolderForm *form, CListBoxItem* item);
 	void OnVoiceClose(CForm* form);
 	void OnVoiceItem(CFolderForm* form, CListBoxItem* item);
-
-	void OnPhotoItem(CFolderForm *form, CListBoxItem* item);
 
 	void Update();
 
@@ -197,11 +182,6 @@ public:
 	virtual CWindow* OnMouseMotion(int x, int y);
 	virtual CWindow* OnMouseButton(SDL_MouseButtonEvent e);
 	void GetJoystickAxis(bool* left, bool* right, bool* up, bool* down);
-
-	void StartRecord();
-	void EndRecord();
-	void ProcessGoogleVoice();
-
 
 	void CloseAll();
 	void WindowDelete(CWindow* win);

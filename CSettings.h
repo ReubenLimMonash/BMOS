@@ -15,7 +15,6 @@ public:
 
 	int mSlideInterval;
 	int mRandomVidInterval;
-	int mFaceInterval;
 
 	int GetAudioSetting(int numid);
 	int SetAudioSetting(int numid, int val);

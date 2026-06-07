@@ -18,23 +18,6 @@ CSettingsForm::CSettingsForm(int x, int y, int w, int h) : CForm(x, y, w, h)
 	label = new CLabel();
 	mPanel->AddWindow(label);
 	label->SetPosition(15, base);
-	label->SetText("Face Interval(sec)", CText::sFontSmall, 300, 40);
-
-	mFaceIntervalMenu = new CMenuBarItem();
-	mFaceIntervalMenu->mFont = CText::sFontSmall;
-	mPanel->AddWindow(mFaceIntervalMenu);
-	mFaceIntervalMenu->ComboBox();
-	mFaceIntervalMenu->AddMenuItem("5", std::bind(&CSettingsForm::OnMenu, this, _1));
-	mFaceIntervalMenu->AddMenuItem("10", std::bind(&CSettingsForm::OnMenu, this, _1));
-	mFaceIntervalMenu->AddMenuItem("15", std::bind(&CSettingsForm::OnMenu, this, _1));
-	mFaceIntervalMenu->AddMenuItem("20", std::bind(&CSettingsForm::OnMenu, this, _1));
-	mFaceIntervalMenu->AddMenuItem("30", std::bind(&CSettingsForm::OnMenu, this, _1));
-	mFaceIntervalMenu->SetTitle("10");
-	mFaceIntervalMenu->SetPosition(Width() - mFaceIntervalMenu->Width() - 10, label->Y);
-
-	label = new CLabel();
-	mPanel->AddWindow(label);
-	label->SetPosition(15, base + spacing*1);
 	label->SetText("Slideshow", CText::sFontSmall, 300, 40);
 
 	mSlideShow = new CMenuBarItem();
@@ -48,7 +31,7 @@ CSettingsForm::CSettingsForm(int x, int y, int w, int h) : CForm(x, y, w, h)
 
 	label = new CLabel();
 	mPanel->AddWindow(label);
-	label->SetPosition(15, base + spacing * 2);
+	label->SetPosition(15, base + spacing * 1);
 	label->SetText("Slide Interval(sec)", CText::sFontSmall, 300, 40);
 
 	mSlideIntervalMenu = new CMenuBarItem();
@@ -65,7 +48,7 @@ CSettingsForm::CSettingsForm(int x, int y, int w, int h) : CForm(x, y, w, h)
 
 	label = new CLabel();
 	mPanel->AddWindow(label);
-	label->SetPosition(15, base + spacing * 3);
+	label->SetPosition(15, base + spacing * 2);
 	label->SetText("Random Video", CText::sFontSmall, 300, 40);
 
 	mRandomVideo = new CMenuBarItem();
@@ -79,7 +62,7 @@ CSettingsForm::CSettingsForm(int x, int y, int w, int h) : CForm(x, y, w, h)
 
 	label = new CLabel();
 	mPanel->AddWindow(label);
-	label->SetPosition(15, base + spacing * 4);
+	label->SetPosition(15, base + spacing * 3);
 	label->SetText("Video Interval(min)", CText::sFontSmall, 300, 40);
 
 	mRandomIntervalMenu = new CMenuBarItem();
@@ -97,7 +80,6 @@ CSettingsForm::CSettingsForm(int x, int y, int w, int h) : CForm(x, y, w, h)
 
 
 	button = new CButton();
-	mPanel->AddWindow(button);
 	
 	button->SetText("OK", CText::sFontSmall, 100, 40);
 	button->AddClickHandler(std::bind(&CSettingsForm::OnButton, this, _1));
@@ -132,34 +114,6 @@ void CSettingsForm::OnButton(CButton* button)
 	}
 
 	Hide();
-}
-
-void CSettingsForm::SetFaceInterval(int i)
-{
-	if (i < 1 && i>30)
-	{
-		return;
-	}
-
-	char t[100];
-	sprintf(t, "%d", i);
-	mFaceIntervalMenu->SetTitle(t);
-}
-
-int CSettingsForm::GetFaceInterval()
-{
-	int i=20;
-
-	try
-	{
-		i = atoi(mFaceIntervalMenu->mText.c_str());
-	}
-	catch (...)
-	{
-
-	}
-
-	return(i);
 }
 
 void CSettingsForm::SetSlideInterval(int i)
