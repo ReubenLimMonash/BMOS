@@ -2579,16 +2579,11 @@ void CDesktop::PlayVideoSync(char* filename)
 		return;
 	}
 	else if (pid == 0) {
-		// Child process
-		char* argv[] = { (char*)"omxplayer",
-			(char*)"--aspect-mode",
-			(char*)"fill",
-			(char*)"--layer",
-			(char*)"10010",
-			(char*)"-o",
-			(char*)"alsa",
-			(char*)"--no-keys",
-			(char*)"--no-osd", 
+		// Child process - play video with VLC
+		char* argv[] = { (char*)"cvlc",
+			(char*)"--play-and-exit",
+			(char*)"--fullscreen",
+			(char*)"--no-audio-resampling",
 			vide, NULL };
 
 		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
@@ -2596,7 +2591,7 @@ void CDesktop::PlayVideoSync(char* filename)
 		dup2(fd, 2);   // stderr to /dev/null
 		close(fd);
 
-		execvp("omxplayer", argv);
+		execvp("cvlc", argv);
 		_exit(127);  // Exit if exec fails
 	}
 	else {
@@ -2664,16 +2659,11 @@ void CDesktop::PlayVideo(char* filename, int face)
 		return;
 	}
 	else if (pid == 0) {
-		// Child process
-		char* argv[] = { (char*)"omxplayer",
-			(char*)"--aspect-mode",
-			(char*)"fill",
-			(char*)"--layer",
-			(char*)"10010",
-			(char*)"-o",
-			(char*)"alsa",
-			(char*)"--no-keys",
-			(char*)"--no-osd", 
+		// Child process - play video with VLC
+		char* argv[] = { (char*)"cvlc",
+			(char*)"--play-and-exit",
+			(char*)"--fullscreen",
+			(char*)"--no-audio-resampling",
 			vide, NULL };
 
 		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
@@ -2681,7 +2671,7 @@ void CDesktop::PlayVideo(char* filename, int face)
 		dup2(fd, 2);   // stderr to /dev/null
 		close(fd);
 
-		execvp("omxplayer", argv);
+		execvp("cvlc", argv);
 		_exit(127);  // Exit if exec fails
 	}
 	else {
@@ -2714,14 +2704,11 @@ void CDesktop::PlayVideoUSB(char* filename, int face)
 		return;
 	}
 	else if (pid == 0) {
-		// Child process
-		char* argv[] = { (char*)"omxplayer",
-			(char*)"--layer",
-			(char*)"10010",
-			(char*)"-o",
-			(char*)"alsa",
-			(char*)"--no-keys",
-			(char*)"--no-osd", 
+		// Child process - play video with VLC
+		char* argv[] = { (char*)"cvlc",
+			(char*)"--play-and-exit",
+			(char*)"--fullscreen",
+			(char*)"--no-audio-resampling",
 			vide, NULL };
 
 		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
@@ -2729,7 +2716,7 @@ void CDesktop::PlayVideoUSB(char* filename, int face)
 		dup2(fd, 2);   // stderr to /dev/null
 		close(fd);
 
-		execvp("omxplayer", argv);
+		execvp("cvlc", argv);
 		_exit(127);  // Exit if exec fails
 	}
 	else {
