@@ -838,6 +838,25 @@ int main(int argc, char **argv)
 
 				gBuffer->DrawScaled(dispW, dispH);
 			}
+			
+			if (gDesktop->mVisible)
+			{
+				
+				if (gDesktop->mOSStatus == false)
+				{
+					if (crack == NULL)
+					{
+						crack = new CTexture();
+						crack->LoadFromFile("images/crack.png");
+					}
+					crack->Draw(0,0,dispW, dispH, 0.0);
+				}
+				else if (crack != NULL)
+				{
+					delete(crack);
+					crack = NULL;
+				}
+			}
 
 			SDL_RenderPresent(gRenderer);
 		}

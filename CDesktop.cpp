@@ -35,6 +35,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
 #else
 #include "BmoProcess.h"
 #endif
@@ -2580,18 +2581,16 @@ void CDesktop::PlayVideoSync(char* filename)
 	}
 	else if (pid == 0) {
 		// Child process - play video with VLC
+		// Ensure DISPLAY is set for the video player
+		setenv("DISPLAY", ":0", 1);
+		
 		char* argv[] = { (char*)"cvlc",
 			(char*)"--play-and-exit",
 			(char*)"--fullscreen",
-			(char*)"--no-audio-resampling",
 			vide, NULL };
 
-		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
-		dup2(fd, 1);   // stdout to /dev/null
-		dup2(fd, 2);   // stderr to /dev/null
-		close(fd);
-
 		execvp("cvlc", argv);
+		// If we get here, execvp failed
 		_exit(127);  // Exit if exec fails
 	}
 	else {
@@ -2638,12 +2637,10 @@ void CDesktop::PlayVideo(char* filename, int face)
 
 	if (wpid != 0)
 	{
-		printf("video playing...\n");
 		return;
 	}
 
 #ifdef WINDOWS
-	//printf("PlayVideo(%s)\n", filename);
 	char cmd[1024];
 	unsigned int h = GetHwnd();
 	void **p = (void**)h;
@@ -2660,16 +2657,13 @@ void CDesktop::PlayVideo(char* filename, int face)
 	}
 	else if (pid == 0) {
 		// Child process - play video with VLC
+		// Ensure DISPLAY is set for the video player
+		setenv("DISPLAY", ":0", 1);
+		
 		char* argv[] = { (char*)"cvlc",
 			(char*)"--play-and-exit",
 			(char*)"--fullscreen",
-			(char*)"--no-audio-resampling",
 			vide, NULL };
-
-		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
-		dup2(fd, 1);   // stdout to /dev/null
-		dup2(fd, 2);   // stderr to /dev/null
-		close(fd);
 
 		execvp("cvlc", argv);
 		_exit(127);  // Exit if exec fails
@@ -2687,8 +2681,8 @@ void CDesktop::PlayVideoUSB(char* filename, int face)
 	char vide[1024];
 	sprintf(vide, "/media/usb/%s", filename);
 
+
 #ifdef WINDOWS
-	//printf("PlayVideo(%s)\n", filename);
 	char cmd[1024];
 	unsigned int h = GetHwnd();
 	void** p = (void**)h;
@@ -2705,18 +2699,16 @@ void CDesktop::PlayVideoUSB(char* filename, int face)
 	}
 	else if (pid == 0) {
 		// Child process - play video with VLC
+		// Ensure DISPLAY is set for the video player
+		setenv("DISPLAY", ":0", 1);
+		
 		char* argv[] = { (char*)"cvlc",
 			(char*)"--play-and-exit",
 			(char*)"--fullscreen",
-			(char*)"--no-audio-resampling",
 			vide, NULL };
 
-		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
-		dup2(fd, 1);   // stdout to /dev/null
-		dup2(fd, 2);   // stderr to /dev/null
-		close(fd);
-
 		execvp("cvlc", argv);
+		// If we get here, execvp failed
 		_exit(127);  // Exit if exec fails
 	}
 	else {
