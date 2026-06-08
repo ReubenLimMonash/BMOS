@@ -2572,11 +2572,37 @@ void CDesktop::PlayVideoSync(char* filename)
 	char vide[1024];
 	sprintf(vide, "/home/reuben/BMOS/videos/%s", filename);
 
-	// Use system() to properly background the video with shell detachment
-	char cmd[2048];
-	sprintf(cmd, "omxplayer --aspect-mode fill --layer 10010 -o alsa --no-keys --no-osd '%s' > /dev/null 2>&1 &", vide);
-	system(cmd);
-	wpid = 1;  // Mark as playing
+	pid_t pid = fork();
+
+	if (pid == -1) {
+		perror("fork failed");
+		return;
+	}
+	else if (pid == 0) {
+		// Child process
+		char* argv[] = { (char*)"omxplayer",
+			(char*)"--aspect-mode",
+			(char*)"fill",
+			(char*)"--layer",
+			(char*)"10010",
+			(char*)"-o",
+			(char*)"alsa",
+			(char*)"--no-keys",
+			(char*)"--no-osd", 
+			vide, NULL };
+
+		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
+		dup2(fd, 1);   // stdout to /dev/null
+		dup2(fd, 2);   // stderr to /dev/null
+		close(fd);
+
+		execvp("omxplayer", argv);
+		_exit(127);  // Exit if exec fails
+	}
+	else {
+		// Parent process
+		wpid = pid;
+	}
 #endif
 
 }
@@ -2631,12 +2657,38 @@ void CDesktop::PlayVideo(char* filename, int face)
 	printf("%s\n", cmd);
 	BmoProcess((char*)cmd);
 #else
-	// Use system() to properly background the video with shell detachment
-	char cmd[2048];
-	sprintf(cmd, "omxplayer --aspect-mode fill --layer 10010 -o alsa --no-keys --no-osd '%s' > /dev/null 2>&1 &", vide);
-	system(cmd);
-	wpid = 1;  // Mark as playing
-	usleep(2000000);
+	pid_t pid = fork();
+
+	if (pid == -1) {
+		perror("fork failed");
+		return;
+	}
+	else if (pid == 0) {
+		// Child process
+		char* argv[] = { (char*)"omxplayer",
+			(char*)"--aspect-mode",
+			(char*)"fill",
+			(char*)"--layer",
+			(char*)"10010",
+			(char*)"-o",
+			(char*)"alsa",
+			(char*)"--no-keys",
+			(char*)"--no-osd", 
+			vide, NULL };
+
+		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
+		dup2(fd, 1);   // stdout to /dev/null
+		dup2(fd, 2);   // stderr to /dev/null
+		close(fd);
+
+		execvp("omxplayer", argv);
+		_exit(127);  // Exit if exec fails
+	}
+	else {
+		// Parent process
+		wpid = pid;
+		usleep(2000000);
+	}
 #endif
 }
 
@@ -2655,12 +2707,36 @@ void CDesktop::PlayVideoUSB(char* filename, int face)
 	printf("%s\n", cmd);
 	BmoProcess((char*)cmd);
 #else
-	// Use system() to properly background the video with shell detachment
-	char cmd[2048];
-	sprintf(cmd, "omxplayer --layer 10010 -o alsa --no-keys --no-osd '%s' > /dev/null 2>&1 &", vide);
-	system(cmd);
-	wpid = 1;  // Mark as playing
-	usleep(2000000);
+	pid_t pid = fork();
+
+	if (pid == -1) {
+		perror("fork failed");
+		return;
+	}
+	else if (pid == 0) {
+		// Child process
+		char* argv[] = { (char*)"omxplayer",
+			(char*)"--layer",
+			(char*)"10010",
+			(char*)"-o",
+			(char*)"alsa",
+			(char*)"--no-keys",
+			(char*)"--no-osd", 
+			vide, NULL };
+
+		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
+		dup2(fd, 1);   // stdout to /dev/null
+		dup2(fd, 2);   // stderr to /dev/null
+		close(fd);
+
+		execvp("omxplayer", argv);
+		_exit(127);  // Exit if exec fails
+	}
+	else {
+		// Parent process
+		wpid = pid;
+		usleep(2000000);
+	}
 #endif
 }
 
