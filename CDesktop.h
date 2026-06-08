@@ -206,7 +206,6 @@ public:
 
 	void StartRecord();
 	void EndRecord();
-	void ProcessGoogleVoice();
 	void SetFace(std::string folder, std::string face);
 
 	void ShowDesktop(bool show);
