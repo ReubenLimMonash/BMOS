@@ -60,10 +60,12 @@ public:
 	Uint32 mBlueButtonTimeout;
 	Uint32 mRandomVideoTimer;
 	Uint32 mSlideTimer;
+	Uint32 mFaceTimer;
 	bool mDPadMouse;
 	SDL_Event mKeyMouseEvent;
 	CKeyMap mKeyMap;
 	CTexture* mCursor;
+	CTexture* mFace;
 	CFiles mPictures;
 	int mCurrentSlide;
 	int mCurrentVideo;
@@ -144,7 +146,7 @@ public:
 	void OnMenuLoScores(CMenuBarItem* item);
 	void OnMenuAbout(CMenuBarItem* item);
 	void OnMenuRepair(CMenuBarItem* item);
-
+	void OnMenuFAQ(CMenuBarItem* item);
 
 	void OnSettingsOK(CSettingsForm* form);
 	void OnAudioOK(CAudioForm* form);
@@ -167,6 +169,7 @@ public:
 	void OnFolderClose(CForm* form);
 	void OnFolderItemRemoved(CForm* form, CListBoxItem* item);
 	void OnFolderItemDoubleClick(CFolderForm* form, CListBoxItem* lbi);
+	void OnFAQItemDoubleClick(CFolderForm* form, CListBoxItem* lbi);
 
 	void OnPhotoItem(CFolderForm *form, CListBoxItem* item);
 	void OnVoiceClose(CForm* form);
@@ -200,6 +203,12 @@ public:
 
 	void shutdown();
 	void reboot();
+
+	void StartRecord();
+	void EndRecord();
+	void ProcessGoogleVoice();
+	void SetPicture(int pic);
+	void SetFace(std::string folder, std::string face);
 
 	void ShowDesktop(bool show);
 };

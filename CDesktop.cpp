@@ -1865,8 +1865,7 @@ CWindow* CDesktop::OnKeyDown(SDL_KeyboardEvent e)
 			}
 			else
 			{
-				mCurrentFace--;
-				mCurrentFace = std::max(mCurrentFace, 0);
+				// Face rotation mode disabled - slideshow only
 			}
 		}
 		else if (e.keysym.sym == SDLK_TAB)
@@ -1887,8 +1886,7 @@ CWindow* CDesktop::OnKeyDown(SDL_KeyboardEvent e)
 			}
 			else
 			{
-				mCurrentFace++;
-				mCurrentFace = std::min(mCurrentFace, (int)mFaces.mFiles.size() - 1);
+				// Face rotation mode disabled - slideshow only
 			}
 
 		}
