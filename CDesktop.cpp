@@ -193,7 +193,7 @@ CDesktop::CDesktop(int w, int h): CDesktop()
 
 
 	mCursor = new CTexture();
-	mCursor->LoadFromFile("images/cursor.png");
+	mCursor->LoadFromFile(CApplication::sBMOS_Root + "images/cursor.png");
 	mCursor->SetPosition(50, h - mCursor->GetHeight());
 	SDL_WarpMouseInWindow(CApplication::sWindow, mCursor->X, mCursor->Y);
 
@@ -235,7 +235,7 @@ CDesktop::CDesktop(int w, int h): CDesktop()
 	CFolder* folder;
 
 	mMenuBar.CreateBlank(w, 40, SDL_TEXTUREACCESS_TARGET);
-	mMenuBar.AddIcon("images/start.png");
+	mMenuBar.AddIcon(CApplication::sBMOS_Root + "images/start.png");
 	CMenuBarItem* item;
 
 	item = new CMenuBarItem();
@@ -284,7 +284,7 @@ CDesktop::CDesktop(int w, int h): CDesktop()
 	item->AddMenuItem("---------", std::bind(&CDesktop::OnHelp, this, _1));
 	item->AddMenuItem("Repair", std::bind(&CDesktop::OnMenuRepair, this, _1));
 
-	mMenuBar.AddRightIcon("images/dpad.png", 1);
+	mMenuBar.AddRightIcon(CApplication::sBMOS_Root + "images/dpad.png", 1);
 	mMenuBar.mRightIcon->mVisible = true;
 	LayoutWindows();
 
@@ -298,14 +298,14 @@ CDesktop::CDesktop(int w, int h): CDesktop()
 
 
 
-	mTrash = new CIcon("images/trash.png", 2);
+	mTrash = new CIcon(CApplication::sBMOS_Root + "images/trash.png", 2);
 	mTrash->SetPosition(800 - mTrash->m_Width-15, 600 - mTrash->mTexH-25);
 	mTrash->SetBounds(2, 43, 70, mTrash->mTexH - 40);
 	mTrash->mDraggable = false;
 	AddIcon(mTrash);
 	mTrash->AddHandler(std::bind(&CDesktop::OnTrash, this, _1));
 
-	mDiskDrive = new CFolder("images/diskdrive.png", 3);
+	mDiskDrive = new CFolder(CApplication::sBMOS_Root + "images/diskdrive.png", 3);
 	mDiskDrive->SetPosition(15, 600 - mDiskDrive->mTexH - 25);
 	//mDiskDrive->SetBounds(2, 43, 70, mDiskDrive->mTexH - 40);
 	mDiskDrive->mDraggable = false;
@@ -2566,12 +2566,17 @@ void CDesktop::OnConfirmInstallMedia(CMessageBox* box, CMessageBox::MessageResul
 
 void CDesktop::PlayVideoSync(char* filename)
 {
-	char s[1000];
 #ifdef WINDOWS
 	//printf("PlayVideo(%s)\n", filename);
 #else
-	sprintf(s, "omxplayer --aspect-mode fill --layer 10010 -o alsa --no-keys --no-osd /home/reuben/BMOS/videos/%s > /dev/null &", filename);
-	system(s);
+	char vide[1024];
+	sprintf(vide, "/home/reuben/BMOS/videos/%s", filename);
+
+	// Use system() to properly background the video with shell detachment
+	char cmd[2048];
+	sprintf(cmd, "omxplayer --aspect-mode fill --layer 10010 -o alsa --no-keys --no-osd '%s' > /dev/null 2>&1 &", vide);
+	system(cmd);
+	wpid = 1;  // Mark as playing
 #endif
 
 }
@@ -2609,24 +2614,12 @@ void CDesktop::PlayVideo(char* filename, int face)
 {
 	char vide[1024];
 	sprintf(vide, "/home/reuben/BMOS/videos/%s", filename);
-	char c2;
 
 	if (wpid != 0)
 	{
 		printf("video playing...\n");
 		return;
 	}
-
-	char* argv[] = { (char*)"omxplayer",
-		(char*)"--aspect-mode",
-		(char*)"fill",
-		(char*)"--layer",
-		(char*)"10010",
-		(char*)"-o",
-		(char*)"alsa",
-		(char*)"--no-keys",
-		(char*)"--no-osd", (char*)
-		vide, NULL };
 
 #ifdef WINDOWS
 	//printf("PlayVideo(%s)\n", filename);
@@ -2638,53 +2631,12 @@ void CDesktop::PlayVideo(char* filename, int face)
 	printf("%s\n", cmd);
 	BmoProcess((char*)cmd);
 #else
-
-
-
-	//printf("%s\n", vide);
-
-	pid_t pid = fork();
-
-	if (pid == -1) {
-		// When fork() returns -1, an error happened.
-		perror("fork failed");
-		//exit(EXIT_FAILURE);
-		return;
-	}
-	else if (pid == 0) {
-		int fd = open("/dev/null", O_RDWR, S_IRUSR | S_IWUSR);
-
-		dup2(fd, 1);   // make stdout go to file
-		execvp("omxplayer", argv);
-		close(fd);
-	}
-	else {
-		// When fork() returns a positive number, we are in the parent process
-		// and the return value is the PID of the newly created child process.
-		wpid = pid;
-		//printf("wpid=%d\n", wpid);
-		//int status;
-		//
-		usleep(2000000);
-		//SetFace("bmo99.jpg");
-		////imagetable(w, h, face);
-		//int wpid = 0;
-		//while (wpid == 0)
-		//{
-		//	wpid = waitpid(pid, &status, WNOHANG);
-		//	if (wpid == 0)
-		//	{
-		//		//c2 = getch();
-		//		//if (c2 == ' ')
-		//		//{
-		//		//	system("./dbuscontrol.sh stop");
-		//		//}
-		//	}
-
-		//	usleep(10000);
-		//	//SDL_Refresh();
-		//}
-	}
+	// Use system() to properly background the video with shell detachment
+	char cmd[2048];
+	sprintf(cmd, "omxplayer --aspect-mode fill --layer 10010 -o alsa --no-keys --no-osd '%s' > /dev/null 2>&1 &", vide);
+	system(cmd);
+	wpid = 1;  // Mark as playing
+	usleep(2000000);
 #endif
 }
 
@@ -2692,16 +2644,6 @@ void CDesktop::PlayVideoUSB(char* filename, int face)
 {
 	char vide[1024];
 	sprintf(vide, "/media/usb/%s", filename);
-	char c2;
-
-	char* argv[] = { (char*)"omxplayer",
-		(char*)"--layer",
-		(char*)"10010",
-		(char*)"-o",
-		(char*)"alsa",
-		(char*)"--no-keys",
-		(char*)"--no-osd", (char*)
-		vide, NULL };
 
 #ifdef WINDOWS
 	//printf("PlayVideo(%s)\n", filename);
@@ -2713,21 +2655,12 @@ void CDesktop::PlayVideoUSB(char* filename, int face)
 	printf("%s\n", cmd);
 	BmoProcess((char*)cmd);
 #else
-	pid_t pid = fork();
-
-	if (pid == -1) {
-		// When fork() returns -1, an error happened.
-		perror("fork failed");
-		//exit(EXIT_FAILURE);
-		return;
-	}
-	else if (pid == 0) {
-		execvp("omxplayer", argv);
-	}
-	else {
-		wpid = pid;
-		usleep(2000000);
-	}
+	// Use system() to properly background the video with shell detachment
+	char cmd[2048];
+	sprintf(cmd, "omxplayer --layer 10010 -o alsa --no-keys --no-osd '%s' > /dev/null 2>&1 &", vide);
+	system(cmd);
+	wpid = 1;  // Mark as playing
+	usleep(2000000);
 #endif
 }
 
@@ -2754,6 +2687,16 @@ void CDesktop::SetPicture(int pic)
 	mFace->LoadFromFile(path);
 }
 
+void CDesktop::SetFace(std::string folder, std::string face)
+{
+	if (mFace == NULL)
+	{
+		mFace = new CTexture();
+	}
+
+	std::string path = folder + "/" + face;
+	mFace->LoadFromFile(path);
+}
 
 void CDesktop::StartRecord()
 {
