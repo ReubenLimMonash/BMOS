@@ -115,11 +115,11 @@ int CSettings::GetAudioSetting(int numid)
     FILE* cmd = NULL;
     if (numid == 1)
     {
-        sprintf(volCmd, "/home/pi/bmos/scripts/getmic.sh");
+        sprintf(volCmd, "/home/reuben/BMOS/scripts/getmic.sh");
     }
     else if (numid == 2)
     {
-        sprintf(volCmd, "/home/pi/bmos/scripts/getvolume.sh");
+        sprintf(volCmd, "/home/reuben/BMOS/scripts/getvolume.sh");
     }
     else
     {
@@ -158,7 +158,7 @@ int CSettings::SetAudioSetting(int numid, int val)
     int n;
     FILE* cmd = NULL;
 
-    sprintf(volCmd, "/home/pi/bmos/scripts/vol.sh %d %d", val, numid);
+    sprintf(volCmd, "/home/reuben/BMOS/scripts/vol.sh %d %d", val, numid);
 #ifndef WINDOWS
     system(volCmd);
 #endif

@@ -53,13 +53,13 @@ Performance Options->GPU Memory
 
 ## Manual Start
 ```
-cd /home/pi/bmos
-/home/pi/bmos/bmos
+cd /home/reuben/BMOS
+/home/reuben/BMOS/bmos
 ```
   
 ## Auto Start
 ```
-sudo cp /home/pi/bmos/scripts/10-bmos.sh /etc/profile.d
+sudo cp /home/reuben/BMOS/scripts/10-bmos.sh /etc/profile.d
 sudo chmod +r /etc/profile.d/10-bmos.sh
 ```
 ## Modes
@@ -70,7 +70,7 @@ When in face mode you can double-click the green button (ALT key on the keyboard
  In desktop mode you can use the DPad and the green button for mouse navigation and selection. Or, if you have a mouse plugged into the USB port, you can mouse as you woudl on a desktop PC. Holding the blue (triangle) button for a few seconds toggles between snap mode which makes the DPad cycle through the UI elements for easier selection. An icon in the upper right corner of the desktop shows which mode you are in.
   
 ## Key Mappings
-Keys are mapped in the /home/pi/bmos/bmo.txt file.
+Keys are mapped in the /home/reuben/BMOS/bmo.txt file.
 
 Supported commands are face, mp4, system, random, and vg.
 
@@ -103,7 +103,7 @@ The "system" command will launch a script. Be careful with this. Starting the wr
 
 Example:
 ```
-Z:system:/home/pi/bmos/scripts/waveleft.sh
+Z:system:/home/reuben/BMOS/scripts/waveleft.sh
 ```
 
 Executes the script tha waves BMO's left arm.

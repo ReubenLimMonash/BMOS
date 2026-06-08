@@ -62,15 +62,15 @@ CDropDownMenu.cpp
 CSettingsForm.cpp)
 target_link_libraries(bmos ${SDL2_LIBRARIES} Boost::filesystem Boost::regex)
 
-install(TARGETS bmos DESTINATION /home/pi/bmos)
-install(DIRECTORY fonts DESTINATION /home/pi/bmos)
-install(DIRECTORY images DESTINATION /home/pi/bmos)
-install(DIRECTORY faq DESTINATION /home/pi/bmos)
-install(DIRECTORY pictures DESTINATION /home/pi/bmos)
-install(DIRECTORY scores DESTINATION /home/pi/bmos)
-install(DIRECTORY videos DESTINATION /home/pi/bmos)
+install(TARGETS bmos DESTINATION /home/reuben/BMOS)
+install(DIRECTORY fonts DESTINATION /home/reuben/BMOS)
+install(DIRECTORY images DESTINATION /home/reuben/BMOS)
+install(DIRECTORY faq DESTINATION /home/reuben/BMOS)
+install(DIRECTORY pictures DESTINATION /home/reuben/BMOS)
+install(DIRECTORY scores DESTINATION /home/reuben/BMOS)
+install(DIRECTORY videos DESTINATION /home/reuben/BMOS)
 
-install(FILES bmo.txt commands.conf DESTINATION /home/pi/bmos
+install(FILES bmo.txt commands.conf DESTINATION /home/reuben/BMOS
 PERMISSIONS  WORLD_WRITE GROUP_WRITE OWNER_WRITE
 	WORLD_READ GROUP_READ OWNER_READ)
 

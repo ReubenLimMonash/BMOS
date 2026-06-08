@@ -403,9 +403,9 @@ CDesktop::CDesktop(int w, int h): CDesktop()
 	mPhotos->mVisible = false;
 	mPhotos->mName = "Photos";
 #ifdef WINDOWS
-	mPhotos->mPath = "c:/home/pi/bmos/pictures/";
+	mPhotos->mPath = "c:/home/reuben/BMOS/pictures/";
 #else
-	mPhotos->mPath = "/home/pi/bmos/pictures/";
+	mPhotos->mPath = "/home/reuben/BMOS/pictures/";
 #endif // WINDOWS
 
 	mBeemotes = new CFolder();
@@ -413,9 +413,9 @@ CDesktop::CDesktop(int w, int h): CDesktop()
 	mBeemotes->mVisible = false;
 	mBeemotes->mName = "Beemotes";
 #ifdef WINDOWS
-	mBeemotes->mPath = "c:/home/pi/bmos/videos/";
+	mBeemotes->mPath = "c:/home/reuben/BMOS/videos/";
 #else
-	mBeemotes->mPath = "/home/pi/bmos/videos/";
+	mBeemotes->mPath = "/home/reuben/BMOS/videos/";
 #endif
 
 	AddIcon(mFAQ);
@@ -563,7 +563,7 @@ void CDesktop::OnWindowMenu(CMenuBarItem* item)
 			SDL_Quit();
 
 #ifndef WINDOWS
-			system("/home/pi/bmos/scripts/emulaunch.sh -desktop &");
+			system("/home/reuben/BMOS/scripts/emulaunch.sh -desktop &");
 #endif
 			SDL_DestroyRenderer(CApplication::sRenderer);
 			SDL_DestroyWindow(CApplication::sWindow);
@@ -733,7 +733,7 @@ void CDesktop::OnMenuVideoGames(CMenuBarItem* item)
 		SDL_Quit();
 
 
-		system("/home/pi/bmos/scripts/emulaunch.sh -desktop &");
+		system("/home/reuben/BMOS/scripts/emulaunch.sh -desktop &");
 
 		SDL_DestroyRenderer(CApplication::sRenderer);
 		SDL_DestroyWindow(CApplication::sWindow);
@@ -756,7 +756,7 @@ void CDesktop::OnMenuParade(CMenuBarItem* item)
 	else
 	{
 #ifndef WINDOWS
-		system("/home/pi/bmos/scripts/parade.sh");
+		system("/home/reuben/BMOS/scripts/parade.sh");
 #endif
 	}
 }
@@ -795,9 +795,9 @@ void CDesktop::OnMenuVoices(CMenuBarItem* item)
 
 		CFiles files;
 #ifdef WINDOWS
-		path = "C:/home/pi/bmos/videos/";
+		path = "C:/home/reuben/BMOS/videos/";
 #else
-		path = "/home/pi/bmos/videos/";
+		path = "/home/reuben/BMOS/videos/";
 #endif
 
 		files.GetFiles(path, mBeemotes->mFilter);
@@ -852,9 +852,9 @@ void CDesktop::OnMenuPhotos(CMenuBarItem* item)
 
 		CFiles files;
 #ifdef WINDOWS
-		path = "C:/home/pi/bmos/pictures/";
+		path = "C:/home/reuben/BMOS/pictures/";
 #else
-		path = "/home/pi/bmos/pictures/";
+		path = "/home/reuben/BMOS/pictures/";
 #endif
 
 		std::vector<CFile> fileObjects;
@@ -1735,7 +1735,7 @@ void CDesktop::OnTextEvent(SDL_TextInputEvent e)
 		{
 			PlayVideoSync((char*)kc.mArgument1.c_str());
 #ifndef WINDOWS
-			system("/home/pi/bmos/scripts/emulaunch.sh -desktop &");
+			system("/home/reuben/BMOS/scripts/emulaunch.sh -desktop &");
 #endif
 			//printf("SDL Quit()\n");
 
@@ -1793,7 +1793,7 @@ CWindow* CDesktop::OnKeyDown(SDL_KeyboardEvent e)
 		{
 #ifndef WINDOWS
 			printf("dbuscontrol.sh stop \n");
-			system("/home/pi/bmos/scripts/dbuscontrol.sh stop");
+			system("/home/reuben/BMOS/scripts/dbuscontrol.sh stop");
 
 			//kill(wpid, 9);
 #endif
@@ -1905,7 +1905,7 @@ CWindow* CDesktop::OnKeyDown(SDL_KeyboardEvent e)
 #ifndef WINDOWS
 				//kill(wpid, 9);
 
-				system("/home/pi/bmos/scripts/dbuscontrol.sh stop");
+				system("/home/reuben/BMOS/scripts/dbuscontrol.sh stop");
 #endif
 			}
 
@@ -2570,7 +2570,7 @@ void CDesktop::PlayVideoSync(char* filename)
 #ifdef WINDOWS
 	//printf("PlayVideo(%s)\n", filename);
 #else
-	sprintf(s, "omxplayer --aspect-mode fill --layer 10010 -o alsa --no-keys --no-osd /home/pi/bmos/videos/%s > /dev/null &", filename);
+	sprintf(s, "omxplayer --aspect-mode fill --layer 10010 -o alsa --no-keys --no-osd /home/reuben/BMOS/videos/%s > /dev/null &", filename);
 	system(s);
 #endif
 
@@ -2608,7 +2608,7 @@ void SDL_Refresh()
 void CDesktop::PlayVideo(char* filename, int face)
 {
 	char vide[1024];
-	sprintf(vide, "/home/pi/bmos/videos/%s", filename);
+	sprintf(vide, "/home/reuben/BMOS/videos/%s", filename);
 	char c2;
 
 	if (wpid != 0)
@@ -2887,7 +2887,7 @@ void CDesktop::ProcessGoogleVoice()
 		return;
 	}
 #ifndef WINDOWS
-	string command = "/home/pi/bmos/scripts/google-voice.sh";
+	string command = "/home/reuben/BMOS/scripts/google-voice.sh";
 
 	cmd = popen(command.c_str(), "r");
 	c = fgetc(cmd);
@@ -3003,7 +3003,7 @@ void CDesktop::ProcessGoogleVoice()
 		{
 			PlayVideoSync((char*)"videogames.mp4");
 #ifndef WINDOWS
-			system("/home/pi/bmos/scripts/emulaunch.sh -desktop &");
+			system("/home/reuben/BMOS/scripts/emulaunch.sh -desktop &");
 #endif
 			SDL_DestroyRenderer(CApplication::sRenderer);
 			SDL_DestroyWindow(CApplication::sWindow);
